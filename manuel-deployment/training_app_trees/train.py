@@ -17,11 +17,11 @@ import time
 import keras
 from keras import layers
 
-def train_evaluate(training_path,val_path,test_path,job_dir, hidden_dim, dropout, embedding_dim ,sequence_length ,max_features, hptune): 
+def train_evaluate(training_file_path,validation_file_path,test_file_path,job_dir, hidden_dim, dropout, embedding_dim ,sequence_length ,max_features, hptune): 
     
-    train0 = pd.read_csv(training_path)
-    val0 = pd.read_csv(val_path)
-    test0 = pd.read_csv(test_path)
+    train0 = pd.read_csv(training_file_path)
+    val0 = pd.read_csv(validation_file_path)
+    test0 = pd.read_csv(test_file_path)
     dataset_tr = tf.data.Dataset.from_tensor_slices((train0.text.values,train0.label.values.astype("float32") ))
     dataset_tr = dataset_tr.shuffle(buffer_size=len(train0)).batch(batch_size=2)
     dataset_val = tf.data.Dataset.from_tensor_slices((val0.text.values,val0.label.values.astype("float32")  ))
