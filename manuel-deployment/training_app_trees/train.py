@@ -112,3 +112,4 @@ def train_evaluate(training_path,val_path,test_path,job_dir, hidden_dim, dropout
         print("Saved model in: {}".format(gcs_model_path)) 
 if __name__ == "__main__":
         fire.Fire(train_evaluate)
+
