@@ -7,3 +7,4 @@ manuel-deployment/.env
 .ipynb_checkpoints/
 detect_llm_kfp_pipeline.json
 vertex-kfp-pipeline/pipeline_vertex/__pycache__/
+vertex-kfp-pipeline-cicd/pipeline_vertex/__pycache__/
