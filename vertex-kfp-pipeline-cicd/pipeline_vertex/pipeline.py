@@ -17,6 +17,7 @@ import os
 from kfp import dsl
 from training_lightweight_component import train_and_deploy
 from tuning_lightweight_component import tune_hyperparameters
+from data_component import extract_data
 
 PIPELINE_ROOT = os.getenv("PIPELINE_ROOT")
 PROJECT_ID = os.getenv("PROJECT_ID")
@@ -40,6 +41,7 @@ THRESHOLD = float(os.getenv("THRESHOLD", "0.8"))
     pipeline_root=PIPELINE_ROOT,
 )
 def detect_llm_train(
+    data_extraction_container_uri: str = TRAINING_CONTAINER_IMAGE_URI,
     training_container_uri: str = TRAINING_CONTAINER_IMAGE_URI,
     serving_container_uri: str = SERVING_CONTAINER_IMAGE_URI,
     training_file_path: str = TRAINING_FILE_PATH,
@@ -52,6 +54,11 @@ def detect_llm_train(
 ):
     staging_bucket = f"{pipeline_root}/staging"
 
+    data_extraction_op = extract_data(
+        project=PROJECT_ID,
+         
+    )
+
     tuning_op = tune_hyperparameters(
         project=PROJECT_ID,
         location=REGION,
@@ -63,8 +70,10 @@ def detect_llm_train(
         staging_bucket=staging_bucket,
         max_trial_count=max_trial_count,
         parallel_trial_count=parallel_trial_count,
+   
     )
-
+    tuning_op.after(data_extraction_op)
+    
     auc = tuning_op.outputs["best_roc_auc"]
 
     with dsl.Condition(
