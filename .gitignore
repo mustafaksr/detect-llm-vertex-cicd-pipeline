@@ -10,3 +10,6 @@ vertex-kfp-pipeline-cicd/pipeline_vertex/__pycache__/
 manuel-deployment/config.yaml
 vertex-kfp-pipeline/detect_llm_kfp_train_and_deploy.yaml
 vertex-kfp-pipeline/detect_llm_kfp_tune_hyperparameters.yaml
+vertex-kfp-pipeline-cicd/detect_llm_kfp_data_extract.yaml
+vertex-kfp-pipeline-cicd/detect_llm_kfp_train_and_deploy.yaml
+vertex-kfp-pipeline-cicd/detect_llm_kfp_tune_hyperparameters.yaml
