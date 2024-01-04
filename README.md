@@ -101,6 +101,11 @@ The `vertex-kfp-pipeline` directory includes a Jupyter notebook (`detect-llm-kfp
 ### CI/CD Version of Kubeflow Pipelines
 The `vertex-kfp-pipeline-cicd` directory contains a Jupyter notebook (`detect_llm_kfp_cicd_vertex.ipynb`) explaining the CI/CD setup for Kubeflow Pipelines. The CI/CD process triggers on a new release of the repository using Google Cloud Build.
 
+## Monitoring
+
+### Wandb
+Wandb [proeject](https://wandb.ai/mustafakeser/detect-llm-gcp/workspace?workspace=user-).
+
 ## Releases
 
 ### Initial Pipeline Release
