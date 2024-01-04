@@ -5,23 +5,41 @@ os.environ["KERAS_BACKEND"] = "tensorflow"
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from dotenv import load_dotenv
-from google.cloud import bigquery
 from google.cloud import storage
 import fire
 import hypertune
 import string
 import re
 from sklearn.metrics import roc_auc_score
-import time
 import keras
 from keras import layers
+import wandb
+from wandb.keras import WandbCallback
+from wandb.keras import WandbMetricsLogger
+
 
 AIP_MODEL_DIR = os.environ["AIP_MODEL_DIR"]
 MODEL_FILENAME = "end_to_end_detect_llm"
 
-def train_evaluate(training_file_path,validation_file_path,test_file_path, hidden_dim, dropout, embedding_dim ,sequence_length ,max_features, hptune): 
-    
+
+def train_evaluate(training_file_path,validation_file_path,test_file_path, hidden_dim, dropout, embedding_dim ,sequence_length ,max_features, hptune, wandb_apikey): 
+    wandb.login(key=wandb_apikey)
+    if hptune:
+         run = wandb.init(
+              project =  "detect-llm-gcp",
+              
+                tags = ["tuning"],
+                entity=None, 
+                job_type="tuning"
+         )
+    else:
+         run = wandb.init(
+              project =  "detect-llm-gcp",
+              
+                tags = ["training"],
+                entity=None, 
+                job_type="training")
+         
     train0 = pd.read_csv(training_file_path)
     val0 = pd.read_csv(validation_file_path)
     test0 = pd.read_csv(test_file_path)
@@ -75,17 +93,19 @@ def train_evaluate(training_file_path,validation_file_path,test_file_path, hidde
     
     predictions = layers.Dense(1, activation="sigmoid", name="predictions")(x)
     model = keras.Model(inputs, predictions)
-    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy",tf.keras.metrics.AUC()])
+    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy",tf.keras.metrics.AUC(name="roc_auc")])
     
     num_cpus = os.cpu_count()
     
     epochs = 1
     tf.random.set_seed(1)
-    model.fit(train_ds, validation_data=val_ds, epochs=epochs,workers=num_cpus)
+    model.fit(train_ds, validation_data=val_ds, epochs=epochs,workers=num_cpus,callbacks=[WandbCallback(monitor="val_roc_auc"),WandbMetricsLogger(log_freq=10)])
+    
     
     
     preds = model.predict(test_ds)
 
+    
     if hptune:
             roc_auc = roc_auc_score(test0.label,preds)
             print('Model roc_auc: {}'.format(roc_auc))
@@ -95,7 +115,7 @@ def train_evaluate(training_file_path,validation_file_path,test_file_path, hidde
               hyperparameter_metric_tag='roc_auc',
               metric_value=roc_auc
             )
-    
+            wandb.log({"test_roc_auc": roc_auc})
     # Save the model
     if not hptune:
 
@@ -104,7 +124,7 @@ def train_evaluate(training_file_path,validation_file_path,test_file_path, hidde
         outputs = model(indices)
         end_to_end_model = keras.Model(inputs, outputs)
         end_to_end_model.compile(
-            loss="binary_crossentropy", optimizer="adam", metrics=["accuracy",tf.keras.metrics.AUC()]
+            loss="binary_crossentropy", optimizer="adam", metrics=["accuracy",tf.keras.metrics.AUC(name="roc_auc")]
         )
         # end_to_end_model.save(model_filename,save_format="keras")
         tf.saved_model.save(
@@ -114,5 +134,7 @@ def train_evaluate(training_file_path,validation_file_path,test_file_path, hidde
         # subprocess.check_call(['gsutil', 'cp', '-r', MODEL_FILENAME, AIP_MODEL_DIR], stderr=sys.stdout)
         subprocess.check_call(['gsutil', 'cp', '-r', f'{MODEL_FILENAME}/*', f'{AIP_MODEL_DIR}/'], stderr=sys.stdout)
         print("Saved model in: {}".format(AIP_MODEL_DIR)) 
+
+    run.finish()
 if __name__ == "__main__":
         fire.Fire(train_evaluate)
