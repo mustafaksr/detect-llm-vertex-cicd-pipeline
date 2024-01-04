@@ -22,6 +22,7 @@ from data_component import extract_data
 PIPELINE_ROOT = os.getenv("PIPELINE_ROOT")
 PROJECT_ID = os.getenv("PROJECT_ID")
 REGION = os.getenv("REGION")
+WANDB_APIKEY = os.getenv("WANDB_APIKEY")
 
 TRAINING_CONTAINER_IMAGE_URI = os.getenv("TRAINING_CONTAINER_IMAGE_URI")
 SERVING_CONTAINER_IMAGE_URI = os.getenv("SERVING_CONTAINER_IMAGE_URI")
@@ -41,7 +42,7 @@ THRESHOLD = float(os.getenv("THRESHOLD", "0.8"))
     pipeline_root=PIPELINE_ROOT,
 )
 def detect_llm_train(
-    data_extraction_container_uri: str = TRAINING_CONTAINER_IMAGE_URI,
+
     training_container_uri: str = TRAINING_CONTAINER_IMAGE_URI,
     serving_container_uri: str = SERVING_CONTAINER_IMAGE_URI,
     training_file_path: str = TRAINING_FILE_PATH,
@@ -51,6 +52,7 @@ def detect_llm_train(
     max_trial_count: int = MAX_TRIAL_COUNT,
     parallel_trial_count: int = PARALLEL_TRIAL_COUNT,
     pipeline_root: str = PIPELINE_ROOT,
+    wandb_apikey:str = WANDB_APIKEY
 ):
     staging_bucket = f"{pipeline_root}/staging"
 
@@ -66,10 +68,11 @@ def detect_llm_train(
         training_file_path=training_file_path,
         validation_file_path=validation_file_path,
         test_file_path=test_file_path,
-        
+        wandb_apikey=wandb_apikey,
         staging_bucket=staging_bucket,
         max_trial_count=max_trial_count,
         parallel_trial_count=parallel_trial_count,
+
    
     )
     tuning_op.after(data_extraction_op)
@@ -94,5 +97,6 @@ def detect_llm_train(
                 hidden_dim=tuning_op.outputs["best_hidden_dim"],
                 max_features=tuning_op.outputs["best_max_features"],
                 sequence_length=tuning_op.outputs["best_sequence_length"],
+                wandb_apikey=wandb_apikey
             )
         )
