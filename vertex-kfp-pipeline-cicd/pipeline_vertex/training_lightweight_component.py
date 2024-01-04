@@ -33,7 +33,8 @@ def train_and_deploy(
     embedding_dim  :int,
     hidden_dim : int,
     max_features :int,
-    sequence_length :int 
+    sequence_length :int ,
+    wandb_apikey: str
 ):
 
     # pylint: disable-next=import-outside-toplevel
@@ -56,6 +57,7 @@ def train_and_deploy(
             f"--hidden_dim={hidden_dim}",
             f"--max_features={max_features}",
             f"--sequence_length={sequence_length}",
+            f"--wandb_apikey={wandb_apikey}",
             "--nohptune",
         ],
         staging_bucket=staging_bucket,
