@@ -33,6 +33,7 @@ def tune_hyperparameters(
     staging_bucket: str,
     max_trial_count: int,
     parallel_trial_count: int,
+    wandb_apikey:str
 ) -> NamedTuple(
     "Outputs",
     [ 
@@ -65,6 +66,7 @@ def tune_hyperparameters(
                     f"--training_file_path={training_file_path}",
                     f"--validation_file_path={validation_file_path}",
                     f"--test_file_path={test_file_path}",
+                    f"--wandb_apikey={wandb_apikey}",
                     "--hptune",
                 ],
             },
