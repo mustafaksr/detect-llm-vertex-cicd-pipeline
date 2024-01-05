@@ -1,4 +1,4 @@
-"""Lightweight component data extraction function."""
+"""Lightweight component data process function."""
 from kfp.v2.dsl import component
 
 @component(
