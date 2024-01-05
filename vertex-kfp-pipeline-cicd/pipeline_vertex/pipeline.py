@@ -18,6 +18,7 @@ from kfp import dsl
 from training_lightweight_component import train_and_deploy
 from tuning_lightweight_component import tune_hyperparameters
 from data_component import extract_data
+from preprocess_component import process_data
 
 PIPELINE_ROOT = os.getenv("PIPELINE_ROOT")
 PROJECT_ID = os.getenv("PROJECT_ID")
@@ -61,6 +62,10 @@ def detect_llm_train(
          
     )
 
+    process_op = process_data(project=PROJECT_ID)
+
+    process_op.after(data_extraction_op)
+
     tuning_op = tune_hyperparameters(
         project=PROJECT_ID,
         location=REGION,
@@ -75,7 +80,8 @@ def detect_llm_train(
 
    
     )
-    tuning_op.after(data_extraction_op)
+    tuning_op.after(process_op)
+    
     
     auc = tuning_op.outputs["best_roc_auc"]
 
