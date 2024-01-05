@@ -6,12 +6,9 @@ from kfp.v2.dsl import component
     output_component_file="detect_llm_kfp_data_extract.yaml",
     packages_to_install=["google-cloud-bigquery"],
 )
-def extract_data(
-    project: str,
-):
+def extract_data(project: str):
     from google.cloud import bigquery
     from google.cloud.exceptions import NotFound
-    import fire
     PROJECT_ID = project
     dataset_id = "detect_llm_ds_bq"
     def shuffle_and_split_data(bigquery_client, PROJECT_ID,dataset_id = dataset_id):
