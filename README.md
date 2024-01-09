@@ -31,6 +31,7 @@ The repository is organized into the following directories:
 .
 ├── LICENSE
 ├── manuel-deployment
+│   ├── config.yaml
 │   ├── requirements.txt
 │   ├── text-classification-from-scratch.ipynb
 │   └── training_app_trees
@@ -58,8 +59,10 @@ The repository is organized into the following directories:
     │   ├── Dockerfile
     │   └── run_pipeline.py
     ├── pipeline_vertex
+    │   ├── data_component.py
     │   ├── __init__.py
     │   ├── pipeline.py
+    │   ├── preprocess_component.py
     │   ├── training_lightweight_component.py
     │   └── tuning_lightweight_component.py
     └── requirements.txt
