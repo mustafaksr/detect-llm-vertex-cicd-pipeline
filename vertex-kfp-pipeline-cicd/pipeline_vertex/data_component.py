@@ -75,8 +75,8 @@ def extract_data(project: str):
 
         shuffle_and_split_data(bigquery_client, PROJECT_ID)
 
-        extract_data_from_table(bigquery_client, PROJECT_ID, "training", TRAINING_FILE_PATH,dataset_id)
-        extract_data_from_table(bigquery_client, PROJECT_ID, "validation", VALIDATION_FILE_PATH,dataset_id)
-        extract_data_from_table(bigquery_client, PROJECT_ID, "test", TEST_FILE_PATH,dataset_id)
+        extract_data_from_table(bigquery_client, PROJECT_ID, "training", TRAINING_FILE_PATH, dataset_id)
+        extract_data_from_table(bigquery_client, PROJECT_ID, "validation", VALIDATION_FILE_PATH, dataset_id)
+        extract_data_from_table(bigquery_client, PROJECT_ID, "test", TEST_FILE_PATH, dataset_id)
 
     extract_data_in(PROJECT_ID,dataset_id)
