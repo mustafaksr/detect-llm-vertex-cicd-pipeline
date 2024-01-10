@@ -107,7 +107,7 @@ The `vertex-kfp-pipeline-cicd` directory contains a Jupyter notebook (`detect_ll
 ## Monitoring
 
 ### Wandb
-Wandb [proeject](https://wandb.ai/mustafakeser/detect-llm-gcp/workspace?workspace=user-).
+Wandb [project](https://wandb.ai/mustafakeser/detect-llm-gcp/workspace?workspace=user-).
 
 ## Releases
 
