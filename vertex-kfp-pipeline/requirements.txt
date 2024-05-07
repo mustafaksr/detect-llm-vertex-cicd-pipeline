@@ -8,4 +8,4 @@ fsspec
 gcsfs
 google-cloud-aiplatform
 kfp==1.8.22
-protobuf==3.19.0
+protobuf==3.19.5
